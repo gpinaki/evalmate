@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+llm_eval_demo/
+.env
+*.so
+.env
+ENV/
+.idea/
+.vscode/
+*.log
+
