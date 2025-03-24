@@ -1,26 +1,30 @@
 
-# LLM Evaluation API
+# LLM Evaluation API: EvalMate
 
-A FastAPI-based API for evaluating LLM-generated responses using various quality metrics.
+A FastAPI-based API for evaluating LLM-generated responses using configurable quality and safety metrics.
 
 ## About This Project
 
-This API is built on top of [DeepEval](https://github.com/confident-ai/deepeval), an open-source framework for evaluating LLM applications. The project extends DeepEval's capabilities with:
+This open-source project is built on top of [DeepEval](https://github.com/confident-ai/deepeval), an evaluation framework for LLM applications. It wraps DeepEval’s core functionality in a structured, developer-friendly API designed for experimentation, prototyping, and integration.
 
-- A structured API for easy integration
-- Multiple evaluation modes for different use cases
-- Cost estimation and resource tracking
-- Additional custom safety metrics
+Note: This API is a standalone personal project and not associated with any client or organization. All code and examples are generic and domain-neutral.
 
-DeepEval provides the core evaluation metrics, while this project adds the API layer, configuration options, and extended functionality.
+Key Enhancements
+Clean REST API for easy integration into apps and pipelines
+Multiple evaluation modes tailored to various LLM use cases
+Token usage and cost estimation support
+Extended support for custom safety metrics
+
+⚠️ **Disclaimer:** This project is a personal initiative developed independently for learning and open-source contribution. It is not affiliated with, sponsored by, or representative of the views, work, or intellectual property of any current or former employer or client. All examples and content are generic and domain-neutral.
+
 
 ## Features
 
-- Multiple evaluation modes for different use cases
-- Comprehensive metrics for answer quality, context relevance, and safety
-- Optimized API calls through selective metric evaluation
-- Flexible and extensible architecture
-- Token usage estimation for cost awareness
+- Support for multiple evaluation modes: quick, standard, rag, agent, complete, and safety
+- Rich set of evaluation metrics: relevance, faithfulness, hallucination, bias, toxicity, and more
+- Token usage estimation to assist in cost transparency
+- Modular, extensible architecture designed for future customization
+- Optimized evaluation through selective metric invocation
 
 ## Metrics Explained
 
@@ -113,7 +117,7 @@ http://localhost:8000/docs
 - **complete**: Comprehensive evaluation with all available metrics
 
 ## Token Usage Estimation
-The current version includes estimated token usage and API cost calculations. These estimations are based on average token counts per evaluation metric and provide an approximate view of resource usage.
+The API includes approximate token tracking and cost estimates based on metric usage patterns. This is useful for developers looking to manage LLM evaluation costs.
 
 ## Future Roadmap
 
@@ -246,6 +250,10 @@ This project was developed using a combination of:
 - Test-driven development to ensure reliability
 
 AI-assisted development helped expedite the implementation while maintaining code quality and best practices. All generated code was reviewed, tested, and integrated to meet project requirements.
+
+## Disclaimer
+
+This repository and its contents are entirely personal and do not represent the views of any company or organization. No proprietary code, confidential data, or client-specific implementation details are included. All work has been developed independently for open-source experimentation and public sharing.
 
 ## License
 
