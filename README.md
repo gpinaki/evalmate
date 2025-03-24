@@ -3,6 +3,17 @@
 
 A FastAPI-based API for evaluating LLM-generated responses using various quality metrics.
 
+## About This Project
+
+This API is built on top of [DeepEval](https://github.com/confident-ai/deepeval), an open-source framework for evaluating LLM applications. The project extends DeepEval's capabilities with:
+
+- A structured API for easy integration
+- Multiple evaluation modes for different use cases
+- Cost estimation and resource tracking
+- Additional custom safety metrics
+
+DeepEval provides the core evaluation metrics, while this project adds the API layer, configuration options, and extended functionality.
+
 ## Features
 
 - Multiple evaluation modes for different use cases
@@ -227,11 +238,20 @@ The current version includes estimated token usage and API cost calculations. Th
 pytest tests/
 ```
 
-## Sample Request APIs
+## Development Process
 
+This project was developed using a combination of:
+- Manual coding and domain expertise
+- AI assistance with code generation and documentation using Claude (Anthropic)
+- Test-driven development to ensure reliability
 
-
+AI-assisted development helped expedite the implementation while maintaining code quality and best practices. All generated code was reviewed, tested, and integrated to meet project requirements.
 
 ## License
 
 MIT
+
+## Acknowledgments
+
+- [DeepEval](https://github.com/confident-ai/deepeval) for providing the foundational evaluation metrics
+- OpenAI for their API that powers the evaluation capabilities
