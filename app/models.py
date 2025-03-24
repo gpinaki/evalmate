@@ -34,10 +34,13 @@ class EvaluationResponse(BaseModel):
     bias_score: Optional[float] = Field(None, alias="Bias Score")
     toxicity_score: Optional[float] = Field(None, alias="Toxicity Score")
     
-    # For future expansion (token usage)
-    # token_usage: Optional[Dict[str, int]] = Field(None, alias="Token Usage")
-    # total_tokens: Optional[int] = Field(None, alias="Total Tokens Used")
-    # estimated_cost: Optional[float] = Field(None, alias="Estimated Cost (USD)")
+    # Basic token usage tracking
+    token_usage: Optional[Dict[str, int]] = Field(None, alias="Token Usage")
+    total_tokens: Optional[int] = Field(None, alias="Total Tokens Used")
+    estimated_cost: Optional[float] = Field(None, alias="Estimated Cost (USD)")
+    # Metrics with accurate token tracking
+    tracked_metrics: Optional[List[str]] = Field(None, alias="Metrics With Token Tracking")
+
     
     # Detailed feedback (optional)
     evaluation_details: Optional[Dict[str, Any]] = Field(None, alias="Evaluation Details")

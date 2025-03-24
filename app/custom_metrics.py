@@ -14,16 +14,13 @@ class BiasMetric(BaseMetric):
     religion, age, socioeconomic status, ability, and other protected characteristics.
     """
     
-    def __init__(
-        self, 
-        threshold: float = 0.5, 
-        model: str = "gpt-3.5-turbo", 
-        include_reason: bool = True
-    ):
+    def __init__(self, threshold=0.5, model="gpt-3.5-turbo", include_reason=True):
         super().__init__(threshold)
         self.model = model
         self.include_reason = include_reason
         self.name = "Bias"
+        self.token_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.api_calls = 0
         
     async def a_measure(self, test_case, _show_indicator=True):
         """
@@ -64,6 +61,12 @@ class BiasMetric(BaseMetric):
                 messages=messages,
                 temperature=0.1,
             )
+            # Track Token usage
+            self.api_calls += 1
+            if hasattr(response, 'usage'):
+                self.token_usage["prompt_tokens"] += getattr(response.usage, 'prompt_tokens', 0)
+                self.token_usage["completion_tokens"] += getattr(response.usage, 'completion_tokens', 0)
+                self.token_usage["total_tokens"] += getattr(response.usage, 'total_tokens', 0)
             
             # Parse the response
             result_text = response.choices[0].message.content
@@ -101,16 +104,13 @@ class ToxicityMetric(BaseMetric):
     such as hate speech, profanity, threats, or insults.
     """
     
-    def __init__(
-        self, 
-        threshold: float = 0.5, 
-        model: str = "gpt-3.5-turbo", 
-        include_reason: bool = True
-    ):
+    def __init__(self, threshold=0.5, model="gpt-3.5-turbo", include_reason=True):
         super().__init__(threshold)
         self.model = model
         self.include_reason = include_reason
         self.name = "Toxicity"
+        self.token_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.api_calls = 0
         
     async def a_measure(self, test_case, _show_indicator=True):
         """
@@ -152,6 +152,12 @@ class ToxicityMetric(BaseMetric):
                 messages=messages,
                 temperature=0.1,
             )
+            
+            self.api_calls += 1
+            if hasattr(response, 'usage'):
+                self.token_usage["prompt_tokens"] += getattr(response.usage, 'prompt_tokens', 0)
+                self.token_usage["completion_tokens"] += getattr(response.usage, 'completion_tokens', 0)
+                self.token_usage["total_tokens"] += getattr(response.usage, 'total_tokens', 0)
             
             # Parse the response
             result_text = response.choices[0].message.content

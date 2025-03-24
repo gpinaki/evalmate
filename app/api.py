@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 import nest_asyncio
 
+
 # Apply nest_asyncio to avoid event loop issues
 nest_asyncio.apply()
 
@@ -186,3 +187,21 @@ async def estimate_api_calls(
 async def health_check() -> Dict[str, str]:
     """Simple health check endpoint."""
     return {"status": "healthy"}
+
+@app.get(
+    "/token-tracking-info/",
+    summary="Get information about token tracking",
+    description="Returns information about which metrics have accurate token tracking."
+)
+async def token_tracking_info():
+    """Get information about token tracking capabilities."""
+    return {
+        "tracked_metrics": ["bias", "toxicity"],
+        "estimated_metrics": ["answer_relevancy", "faithfulness", "hallucination", 
+                             "contextual_relevancy", "contextual_precision", "contextual_recall"],
+        "notes": [
+            "Token usage is accurately tracked for 'bias' and 'toxicity' metrics.",
+            "Other metrics use estimated token counts of approximately 800 tokens per metric.",
+            "Future updates will extend accurate tracking to all metrics."
+        ]
+    }

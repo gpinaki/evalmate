@@ -9,6 +9,7 @@ A FastAPI-based API for evaluating LLM-generated responses using various quality
 - Comprehensive metrics for answer quality, context relevance, and safety
 - Optimized API calls through selective metric evaluation
 - Flexible and extensible architecture
+- Token usage estimation for cost awareness
 
 ## Metrics Explained
 
@@ -41,11 +42,10 @@ A FastAPI-based API for evaluating LLM-generated responses using various quality
 | /evaluate/ | POST | Evaluate an LLM response using specified mode |
 | /estimate/ | GET | Estimate API calls and cost for an evaluation mode |
 | /modes/ | GET | Get information about available evaluation modes |
+| /token-tracking-info/ | GET | Information about token usage estimation |
 | /health | GET | Check if the API is running |
 
-
 ## Project Structure
-
 ```
 llm-eval-demo/
 │── app/
@@ -100,6 +100,17 @@ http://localhost:8000/docs
 - **rag**: For RAG systems, with Contextual Relevancy, Faithfulness, and Hallucination
 - **agent**: For AI agents, with Answer Relevancy, Faithfulness, and Hallucination
 - **complete**: Comprehensive evaluation with all available metrics
+
+## Token Usage Estimation
+The current version includes estimated token usage and API cost calculations. These estimations are based on average token counts per evaluation metric and provide an approximate view of resource usage.
+
+## Future Roadmap
+
+- **Accurate Token Tracking**: Implement precise token usage tracking for all metrics
+- **Provider Alternatives**: Support for multiple LLM providers beyond OpenAI
+- **Custom Metrics**: Allow users to define and use their own evaluation metrics
+- **Evaluation History**: Store and analyze evaluation results over time
+- **Web Dashboard**: Visual interface for evaluation management and results analysis
 
 ## Example API Request
 
