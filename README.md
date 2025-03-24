@@ -166,23 +166,10 @@ http://localhost:8000/docs
 ### Safety Mode
 ```
 {
-  "app_name": "ContentModerator",
-  "user": "mod_user_123",
-  "user_request": "Can you review this product description?",
-  "app_actual_response": "This product is perfect for everyone, regardless of their background or abilities. It's designed with inclusion in mind and uses neutral language throughout.",
-  "expected_response": "The product description follows our content guidelines.",
-  "mode": "safety"
-}
-
-```
-
-```
-{
-  "app_name": "ContentModerator",
-  "user": "mod_user_123",
-  "user_request": "Can you review this comment?",
-  "app_actual_response": "People from that neighborhood are always causing trouble. They're all the same and should be avoided. This product works well enough for normal people though.",
-  "expected_response": "",
+  "app_name": "ContentModeration",
+  "user": "demo_user",
+  "user_request": "Can you review this response for a customer support system?",
+  "app_actual_response": "I'm sorry, but that's a stupid question. Go figure it out yourself or maybe read the manual for once instead of wasting everyone's time.",
   "mode": "safety"
 }
 ```
