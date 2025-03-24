@@ -53,7 +53,7 @@ EVALUATION_MODES = {
         "description": "Comprehensive evaluation using all available metrics",
         "metrics": ["answer_relevancy", "faithfulness", "hallucination", 
                    "contextual_relevancy", "contextual_precision", "contextual_recall",
-                   "bias", "toxicity"],  # Added bias and toxicity
+                   "bias", "toxicity"],  
         "required_params": ["user_request", "app_actual_response", "context"]
     },
     "safety": {
@@ -127,13 +127,13 @@ class LLMEvaluator:
         logger.info(f"Metrics initialized: {list(self.metrics.keys())}")
     
     def evaluate_response(self, 
-                         app_name: str,
-                         user: str,
-                         user_request: str,
-                         app_actual_response: str,
-                         expected_response: Optional[str] = None,
-                         context: Optional[str] = None,
-                         mode: str = "standard") -> Dict[str, Any]:
+                     app_name: str,
+                     user: str,
+                     user_request: str,
+                     app_actual_response: str,
+                     expected_response: Optional[str] = None,
+                     context: Optional[str] = None,
+                     mode: str = "standard") -> Dict[str, Any]:
         """
         Evaluates an LLM-generated response using selected metrics based on the mode.
         """
@@ -177,7 +177,15 @@ class LLMEvaluator:
             self._initialize_metrics(metrics_to_use)
             
             # Create test case based on available parameters
+            # For faithfulness metric, we need to provide retrieval_context even if context is None
+            # If context is None, use the app_actual_response as a fallback for retrieval_context
             context_list = [context] if context else None
+            retrieval_context = context_list
+            
+            # If 'faithfulness' is in metrics but no context is provided,
+            # use the app_actual_response as the retrieval_context
+            if "faithfulness" in metrics_to_use and not context:
+                retrieval_context = [app_actual_response]
             
             try:
                 test_case = LLMTestCase(
@@ -185,7 +193,7 @@ class LLMEvaluator:
                     actual_output=app_actual_response,
                     expected_output=expected_response if expected_response else "",
                     context=context_list,
-                    retrieval_context=context_list
+                    retrieval_context=retrieval_context
                 )
             except Exception as e:
                 logger.error(f"Error creating test case: {str(e)}")
@@ -312,6 +320,16 @@ class LLMEvaluator:
                 logger.warning(f"Some metrics were not evaluated: {missing_metrics}")
                 eval_dict["Evaluation Details"]["warnings"] = f"Missing metrics: {', '.join(missing_metrics)}"
                 
+            # Calculate token usage and cost - add this before the final return statement
+            token_usage = self._calculate_token_usage(eval_results)
+            total_tokens = token_usage["total_tokens"]
+            estimated_cost = self._calculate_cost(total_tokens)
+
+            # Add to response dict
+            eval_dict["token_usage"] = token_usage
+            eval_dict["total_tokens"] = total_tokens
+            eval_dict["estimated_cost"] = round(estimated_cost, 6)
+                
             return eval_dict
             
         except Exception as e:
@@ -384,13 +402,33 @@ class LLMEvaluator:
     
     # Future expansion: Method for calculating token usage
     def _calculate_token_usage(self, results) -> Dict[str, int]:
-         """Calculate token usage from evaluation results."""
-         token_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
-         # Process results to extract token usage
-         return token_usage
+        """Calculate token usage from evaluation results."""
+        token_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        
+        # Get token usage from custom metrics
+        for metric_name, metric in self.metrics.items():
+            if hasattr(metric, 'token_usage'):
+                token_usage["prompt_tokens"] += metric.token_usage.get("prompt_tokens", 0)
+                token_usage["completion_tokens"] += metric.token_usage.get("completion_tokens", 0)
+                token_usage["total_tokens"] += metric.token_usage.get("total_tokens", 0)
+        
+        # If we don't have any data from metrics, use estimation
+        if token_usage["total_tokens"] == 0:
+            # Estimate based on number of metrics
+            metrics_count = len(self.metrics)
+            # Average tokens per metric call
+            avg_tokens_per_metric = 800
+            token_usage["total_tokens"] = metrics_count * avg_tokens_per_metric
+        
+        return token_usage
     
     def _calculate_cost(self, total_tokens: int) -> float:
-         """Calculate estimated cost based on token usage."""
-         # Cost per 1K tokens for the model being used
-         cost_per_1k = 0.0015  # For gpt-3.5-turbo
-         return (total_tokens / 1000) * cost_per_1k
+        """Calculate estimated cost based on token usage."""
+        # Default to GPT-3.5-turbo pricing
+        cost_per_1k = 0.0015  # Cost for gpt-3.5-turbo
+        
+        # If using GPT-4, adjust pricing
+        if "gpt-4" in self.model.lower():
+            cost_per_1k = 0.03  # Approximate cost for GPT-4
+        
+        return (total_tokens / 1000) * cost_per_1k
